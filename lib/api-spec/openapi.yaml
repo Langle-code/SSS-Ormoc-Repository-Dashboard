@@ -1,22 +1,35 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SSS Ormoc Digital R-1/R-1A Repository API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: employers
+    description: Employer management
+  - name: documents
+    description: Document management
+  - name: dashboard
+    description: Dashboard statistics
+  - name: login-history
+    description: Login history
+  - name: jurisdictions
+    description: Jurisdiction data
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +37,435 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Sign in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Sign out
+      responses:
+        "200":
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /employers:
+    get:
+      operationId: listEmployers
+      tags: [employers]
+      summary: List employers
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: jurisdiction
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Employer list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employer"
+    post:
+      operationId: createEmployer
+      tags: [employers]
+      summary: Create an employer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEmployerBody"
+      responses:
+        "201":
+          description: Created employer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employer"
+
+  /employers/{id}:
+    get:
+      operationId: getEmployer
+      tags: [employers]
+      summary: Get employer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Employer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employer"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateEmployer
+      tags: [employers]
+      summary: Update an employer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmployerBody"
+      responses:
+        "200":
+          description: Updated employer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employer"
+    delete:
+      operationId: deleteEmployer
+      tags: [employers]
+      summary: Delete an employer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List documents with filters
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: jurisdiction
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: employerId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: uploadDocument
+      tags: [documents]
+      summary: Upload a scanned document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadDocumentBody"
+      responses:
+        "201":
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      summary: Get document details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateDocumentStatus
+      tags: [documents]
+      summary: Update document verification status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDocumentStatusBody"
+      responses:
+        "200":
+          description: Updated document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete a document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /documents/upload-url:
+    post:
+      operationId: getUploadUrl
+      tags: [documents]
+      summary: Get a presigned URL for uploading a PDF to Supabase Storage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetUploadUrlBody"
+      responses:
+        "200":
+          description: Upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard summary statistics
+      parameters:
+        - name: jurisdiction
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /login-history:
+    get:
+      operationId: listLoginHistory
+      tags: [login-history]
+      summary: List login history
+      responses:
+        "200":
+          description: Login history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoginHistoryEntry"
+    delete:
+      operationId: clearLoginHistory
+      tags: [login-history]
+      summary: Clear all login history
+      responses:
+        "204":
+          description: Cleared
+
+  /jurisdictions:
+    get:
+      operationId: listJurisdictions
+      tags: [jurisdictions]
+      summary: List all jurisdictions grouped by category
+      responses:
+        "200":
+          description: Jurisdictions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JurisdictionList"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +476,361 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, account_officer]
+        jurisdictions:
+          type: array
+          items:
+            type: string
+      required:
+        - email
+        - password
+        - name
+        - role
+        - jurisdictions
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        showSurvey:
+          type: boolean
+        surveyUrl:
+          type: string
+      required:
+        - user
+        - showSurvey
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, account_officer]
+        jurisdictions:
+          type: array
+          items:
+            type: string
+        loginCount:
+          type: integer
+      required:
+        - id
+        - email
+        - name
+        - role
+        - jurisdictions
+        - loginCount
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, account_officer]
+        jurisdictions:
+          type: array
+          items:
+            type: string
+        loginCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - name
+        - role
+        - jurisdictions
+        - loginCount
+        - createdAt
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, account_officer]
+        jurisdictions:
+          type: array
+          items:
+            type: string
+
+    Employer:
+      type: object
+      properties:
+        id:
+          type: integer
+        employerId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        jurisdiction:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - employerId
+        - name
+        - address
+        - jurisdiction
+        - createdAt
+
+    CreateEmployerBody:
+      type: object
+      properties:
+        employerId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        jurisdiction:
+          type: string
+      required:
+        - employerId
+        - name
+        - address
+        - jurisdiction
+
+    UpdateEmployerBody:
+      type: object
+      properties:
+        employerId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        jurisdiction:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        formName:
+          type: string
+        formType:
+          type: string
+        employerId:
+          type: integer
+        employerName:
+          type: string
+        jurisdiction:
+          type: string
+        fileUrl:
+          type: string
+        fileName:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        uploadedBy:
+          type: integer
+        uploadedByName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - formName
+        - formType
+        - employerId
+        - employerName
+        - jurisdiction
+        - fileUrl
+        - fileName
+        - status
+        - uploadedBy
+        - uploadedByName
+        - createdAt
+
+    UploadDocumentBody:
+      type: object
+      properties:
+        formName:
+          type: string
+        formType:
+          type: string
+          enum: [R1/R1A]
+        employerId:
+          type: integer
+        fileName:
+          type: string
+        fileUrl:
+          type: string
+      required:
+        - formName
+        - formType
+        - employerId
+        - fileName
+        - fileUrl
+
+    UpdateDocumentStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+      required:
+        - status
+
+    GetUploadUrlBody:
+      type: object
+      properties:
+        fileName:
+          type: string
+        contentType:
+          type: string
+      required:
+        - fileName
+        - contentType
+
+    UploadUrlResponse:
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+        fileUrl:
+          type: string
+        filePath:
+          type: string
+      required:
+        - uploadUrl
+        - fileUrl
+        - filePath
+
+    DashboardStats:
+      type: object
+      properties:
+        totalEmployers:
+          type: integer
+        totalDocuments:
+          type: integer
+        pendingDocuments:
+          type: integer
+        approvedDocuments:
+          type: integer
+        rejectedDocuments:
+          type: integer
+      required:
+        - totalEmployers
+        - totalDocuments
+        - pendingDocuments
+        - approvedDocuments
+        - rejectedDocuments
+
+    LoginHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: string
+        userEmail:
+          type: string
+        userRole:
+          type: string
+        jurisdiction:
+          type: string
+        browser:
+          type: string
+        loginAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - userName
+        - userEmail
+        - userRole
+        - jurisdiction
+        - browser
+        - loginAt
+
+    JurisdictionCategory:
+      type: object
+      properties:
+        category:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+      required:
+        - category
+        - items
+
+    JurisdictionList:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/JurisdictionCategory"
+      required:
+        - categories

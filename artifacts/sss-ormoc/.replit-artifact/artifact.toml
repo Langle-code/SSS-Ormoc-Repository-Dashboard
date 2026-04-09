@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "SSS Ormoc - Digital R-1/R-1A Repository"
+version = "1.0.0"
+id = "artifacts/sss-ormoc"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26019
+
+[services.development]
+run = "pnpm --filter @workspace/sss-ormoc run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sss-ormoc", "run", "build" ]
+publicDir = "artifacts/sss-ormoc/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26019"
+BASE_PATH = "/"
