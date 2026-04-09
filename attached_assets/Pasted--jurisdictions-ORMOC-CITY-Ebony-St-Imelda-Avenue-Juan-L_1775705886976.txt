@@ -1,0 +1,142 @@
+ jurisdictions: ORMOC CITY:
+Ebony St.
+Imelda Avenue
+Juan Luna St.
+Obrero St.
+Port Area
+Public Market
+Sabang
+Superdome (Arradaza St.)
+Terminal Area
+Bonifacio St.
+JT Kangleon St.
+Real St.
+Rizal Ext.
+Rizal St.
+San Juaquin St.
+San Nicolas St.
+San Vidal St.
+Solidor St.
+Arradaza St.
+Carlos Tan St.
+Cataag St.
+J. Navarro St.
+Mabini St.
+Osmeña St.
+Superdome
+Burgos St.
+Food Court
+San Pedro St.
+Agua Dulce St.
+San Pablo St.
+Aviles St.
+Lopez Jaena St.
+
+BARANGAY:
+Alegria Brgy.
+Batuan Brgy.
+Curva Brgy.
+Domonar Brgy.
+Esperanza Brgy.
+Green Valley Brgy.
+Lao Brgy.
+Leondoni Brgy.
+Licuma Brgy.
+Mabato Brgy.
+Manlilinao Brgy.
+Margen Brgy.
+Mas-in Brgy.
+Matica-a Brgy.
+Nueva Sociedad Brgy.
+RM Tan Brgy.
+San Juan Brgy.
+San Vicente Brgy.
+Doña Feliza Mejia Brgy.
+Don F. Larrazabal Brgy.
+Donghol Brgy.
+Hermosilla Drive Brgy.
+Linao Brgy.
+Malbasag Brgy.
+Nadongholan Brgy.
+Naungan Brgy.
+Bagong Buhay Brgy.
+Cabaon-an Brgy.
+Cabintan Brgy.
+Dolores Brgy.
+Gaas Brgy.
+Isla Verde Brgy.
+Lake Danao Brgy.
+Liberty Brgy.
+Luna Brgy.
+Milagro Brgy.
+Nueva Vista Brgy.
+Red Cross Village Brgy.
+San Isidro Brgy.
+San Pablo Brgy.
+Sto. Niño Brgy.
+Tongonan Brgy.
+Alta Vista Brgy.
+Bantigue Brgy.
+Boroc Brgy.
+Camp Downes Brgy.
+Can Adieng Brgy.
+Can-untog Brgy.
+Cogon Brgy.
+Danhug Brgy.
+Hugpa Brgy.
+Ipil Brgy.
+Laray Boroc Brgy.
+Mabini Brgy.
+Macabug Brgy.
+Patag Brgy.
+Punta Brgy.
+San Antonio Brgy.
+Sumangga Brgy.
+Tambulilid Brgy.
+Airport Brgy.
+Balion Labrador Brgy.
+Bayog Brgy.
+Biliboy Brgy.
+Cabulihan Brgy.
+Cagbuhangin Brgy.
+Catayum Brgy.
+Catmon Brgy.
+Concepcion Brgy.
+Dayhagan Brgy.
+Guintiguian Brgy.
+Hibunaon Brgy.
+Juaton Brgy.
+Kadaohan Brgy.
+Labrador Brgy.
+Magaswe Brgy.
+Maticaa Brgy.
+Nasunogan Brgy.
+Sabong Bao Brgy.
+Salvacion Brgy.
+San Jose Brgy.
+Valencia Brgy.
+Libertad Brgy.
+Lilo-an Brgy.
+
+TOWN:
+ISABEL, LEYTE
+MAHAPLAG, LEYTE
+SAN ISIDRO, LEYTE
+TABANGO, LEYTE
+VILLABA, LEYTE
+ALBUERA, LEYTE
+PALOMPON, LEYTE
+MERIDA, LEYTE
+KANANGA, LEYTE
+MATAG-OB, LEYTE
+CITY OF BAYBAY, LEYTE
+CALUBIAN, LEYTE
+LEYTE, LEYTE
+ALMERIA, BILIRAN
+BILIRAN, BILIRAN
+CABUCGAYAN, BILIRAN
+CAIBIRAN, BILIRAN
+CULABA, BILIRAN
+KAWAYAN, BILIRAN
+MARIPIPI, BILIRAN
+NAVAL, BILIRLAN also ANYONE CAN CREATE AN ACCOUNT IF THEY DON'T HAVE AN ACCOUNT YET AND THE ACCOUNT CAN EITHER BE AN ADMIN OR AN ACCOUNT OFFICER. THEY HAVE THE OPTION TO CHOOSE.
