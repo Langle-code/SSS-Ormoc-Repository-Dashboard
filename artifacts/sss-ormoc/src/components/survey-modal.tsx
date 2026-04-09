@@ -31,24 +31,32 @@ export function SurveyModal() {
         <DialogHeader>
           <DialogTitle>We value your feedback!</DialogTitle>
           <DialogDescription>
-            You have logged in multiple times. We would appreciate it if you could take a moment to fill out a short survey about your experience.
+            You have logged in multiple times. We would appreciate it if you
+            could take a moment to fill out a short survey about your
+            experience.
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center justify-center py-6">
-          <img 
-            src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=400" 
-            alt="Feedback" 
+          <img
+            src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=400"
+            alt="Feedback"
             className="rounded-lg object-cover h-40 w-full"
           />
         </div>
         <DialogFooter className="sm:justify-between">
-          <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setIsOpen(false)}
+          >
             Remind me later
           </Button>
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={() => {
-              window.open(surveyUrl, "_blank");
+              window.open(
+                "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAFiB1KRUMjhFUFZNTEhCOExCRlcwRVI1Q0dXWkpWTS4u",
+              );
               setIsOpen(false);
             }}
           >

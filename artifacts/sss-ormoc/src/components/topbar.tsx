@@ -7,7 +7,7 @@ export function Topbar() {
   return (
     <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background px-6 shadow-sm">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold">Digital R-1/R-1A Repository and Dashboard</h1>
+        <h1 className="text-lg font-semibold">SSS Digital Repository and Dashboard</h1>
         {user && (
           <Badge variant="secondary" className="capitalize">
             {user.role.replace("_", " ")}

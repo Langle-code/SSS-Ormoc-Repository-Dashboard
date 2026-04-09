@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
+
 type AuthContextType = {
   user: AuthUser | null;
   isLoading: boolean;
@@ -83,8 +84,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+
+
   return (
     <AuthContext.Provider value={{ user, isLoading: isMeLoading, login, register, logout }}>
+      
       {children}
     </AuthContext.Provider>
   );
