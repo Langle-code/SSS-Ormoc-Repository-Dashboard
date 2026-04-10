@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { supabase } from "@/lib/supabase";
 import { MailCheck } from "lucide-react";
 
 export default function ForgotPassword() {
@@ -13,25 +14,18 @@ export default function ForgotPassword() {
     setError("");
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Something went wrong. Please try again.");
-        return;
-      }
+    setLoading(false);
 
-      setSent(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
+    if (resetError) {
+      setError(resetError.message);
+      return;
     }
+
+    setSent(true);
   };
 
   return (
