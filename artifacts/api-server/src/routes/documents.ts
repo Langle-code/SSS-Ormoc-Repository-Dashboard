@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, documentsTable, employersTable, usersTable } from "@workspace/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, inArray, sql } from "drizzle-orm";
 import {
   UploadDocumentBody,
   GetDocumentParams,
@@ -36,10 +36,9 @@ router.get("/documents", requireAuth, async (req, res): Promise<void> => {
 
   if (req.session?.role === "account_officer") {
     const userJurisdictions = req.session.jurisdictions || [];
-    if (userJurisdictions.length > 0) {
-      conditions.push(
-        sql`${documentsTable.jurisdiction} = ANY(${userJurisdictions})`
-      );
+    const hasAll = userJurisdictions.includes("All Jurisdictions");
+    if (!hasAll && userJurisdictions.length > 0) {
+      conditions.push(inArray(documentsTable.jurisdiction, userJurisdictions));
     }
   }
 
