@@ -74,26 +74,31 @@ export default function Register() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-primary p-12 text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 opacity-90 z-0" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-primary font-bold text-xl">
-              SSS
-            </div>
-            <h1 className="text-2xl font-bold">Ormoc Branch</h1>
-          </div>
-          <div className="mt-20">
-            <h2 className="text-4xl font-bold mb-4 leading-tight">
-              Digital R-1/R-1A Repository <br /> and Dashboard
-            </h2>
-            <p className="text-lg text-primary-foreground/80 max-w-md">
-              Create your account to start managing employer registration forms.
-            </p>
-          </div>
+      <div className="hidden lg:flex lg:w-1/2 flex-col bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 z-0" />
+        <div
+          className="absolute inset-0 opacity-10 mix-blend-overlay z-0"
+          style={{
+            backgroundImage:
+              'url("https://images.unsplash.com/photo-1577415124269-3187ca0ee0be?auto=format&fit=crop&q=80&w=2000")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <div className="relative z-10 flex flex-col flex-1 items-center justify-center text-center px-12">
+          <img
+            src="/sss-logo.png"
+            alt="SSS Logo"
+            className="h-28 w-28 rounded-xl object-contain mb-6 shadow-lg"
+          />
+          <h1 className="text-3xl font-extrabold tracking-tight leading-tight">SSS</h1>
+          <h2 className="text-xl font-semibold mt-1">Ormoc Branch</h2>
+          <p className="mt-3 text-lg font-medium text-primary-foreground/90 leading-snug">
+            SSS Digital Repository<br />and Dashboard
+          </p>
         </div>
-        <div className="relative z-10 mt-auto pt-10">
-          <p className="text-sm text-primary-foreground/60">
+        <div className="relative z-10 pb-6 text-center">
+          <p className="text-xs text-primary-foreground/50">
             AB 2026. All rights reserved. Tenshi Inc.
           </p>
         </div>

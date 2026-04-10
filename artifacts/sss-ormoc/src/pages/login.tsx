@@ -30,23 +30,18 @@ export default function Login() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       await login(values);
-    } catch (error) {
+    } catch {
       // handled in context
     }
   };
 
   return (
     <div className="flex min-h-screen bg-background">
-
       {/* LEFT SIDE */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col bg-primary p-12 text-primary-foreground relative overflow-hidden">
-
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 opacity-90 z-0"></div>
-
-        {/* Background image */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 z-0" />
         <div
-          className="absolute inset-0 opacity-20 mix-blend-overlay z-0"
+          className="absolute inset-0 opacity-10 mix-blend-overlay z-0"
           style={{
             backgroundImage:
               'url("https://images.unsplash.com/photo-1577415124269-3187ca0ee0be?auto=format&fit=crop&q=80&w=2000")',
@@ -55,52 +50,38 @@ export default function Login() {
           }}
         />
 
-        {/* CENTERED CONTENT */}
-        <div className="relative z-10 flex flex-col justify-center flex-1">
-
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-primary font-bold text-xl">
-              SSS
-            </div>
-            <h1 className="text-2xl font-bold">Ormoc Branch</h1>
-          </div>
-
-          <div className="mt-10">
-            <h2 className="text-4xl font-bold mb-4 leading-tight">
-              SSS Digital Repository <br /> and Dashboard
-            </h2>
-            <p className="text-lg text-primary-foreground/80 max-w-md">
-              
-            </p>
-          </div>
+        <div className="relative z-10 flex flex-col flex-1 items-center justify-center text-center px-12">
+          <img
+            src="/sss-logo.png"
+            alt="SSS Logo"
+            className="h-28 w-28 rounded-xl object-contain mb-6 shadow-lg"
+          />
+          <h1 className="text-3xl font-extrabold tracking-tight leading-tight">SSS</h1>
+          <h2 className="text-xl font-semibold mt-1">Ormoc Branch</h2>
+          <p className="mt-3 text-lg font-medium text-primary-foreground/90 leading-snug">
+            SSS Digital Repository<br />and Dashboard
+          </p>
         </div>
 
-        {/* FOOTER */}
-        <div className="relative z-10 mt-auto pt-10">
-          <p className="text-sm text-primary-foreground/60">
+        <div className="relative z-10 pb-6 text-center">
+          <p className="text-xs text-primary-foreground/50">
             AB 2026. All rights reserved. Tenshi Inc.
           </p>
         </div>
       </div>
 
-      {/* RIGHT SIDE (LOGIN FORM) */}
+      {/* RIGHT SIDE */}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8">
-
           <div className="text-center lg:text-left">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              Sign in to your account
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">Sign in</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Enter your email and password to access the dashboard
+              Enter your credentials to access the dashboard
             </p>
           </div>
 
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="email"
@@ -108,16 +89,12 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="admin@sss.gov.ph"
-                        {...field}
-                      />
+                      <Input placeholder="admin@sss.gov.ph" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -125,35 +102,21 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
+                      <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting
-                  ? "Signing in..."
-                  : "Sign in"}
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </Form>
 
           <p className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Link
-              href="/register"
-              className="font-semibold text-primary hover:underline"
-            >
+            <Link href="/register" className="font-semibold text-primary hover:underline">
               Create an account
             </Link>
           </p>
