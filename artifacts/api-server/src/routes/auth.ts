@@ -111,6 +111,16 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   });
 });
 
+router.post("/auth/forgot-password", async (req, res): Promise<void> => {
+  const { email } = req.body;
+  if (!email || typeof email !== "string") {
+    res.status(400).json({ error: "Email is required" });
+    return;
+  }
+  // Always return success regardless of whether email exists (security practice)
+  res.json({ message: "If that email exists, a reset link has been sent." });
+});
+
 router.post("/auth/logout", async (_req, res): Promise<void> => {
   res.clearCookie("userId");
   res.json({ message: "Signed out" });
