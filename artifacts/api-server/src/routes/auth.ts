@@ -3,12 +3,13 @@ import bcryptjs from "bcryptjs";
 import { db, usersTable, loginHistoryTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
+import { requireAuth, requireAdmin } from "../lib/auth";
 
 const SURVEY_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAFiB1KRUMjhFUFZNTEhCOExCRlcwRVI1Q0dXWkpWTS4uUSe";
 
 const router: IRouter = Router();
 
-router.post("/auth/register", async (req, res): Promise<void> => {
+router.post("/auth/register", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const parsed = RegisterBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });

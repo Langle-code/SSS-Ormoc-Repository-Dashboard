@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, loginHistoryTable, usersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
-import { requireAuth } from "../lib/auth";
+import { requireAuth, requireAdmin } from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -24,7 +24,7 @@ router.get("/login-history", requireAuth, async (_req, res): Promise<void> => {
   res.json(entries);
 });
 
-router.delete("/login-history", requireAuth, async (_req, res): Promise<void> => {
+router.delete("/login-history", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   await db.delete(loginHistoryTable);
   res.sendStatus(204);
 });

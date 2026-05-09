@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, jurisdictionsTable } from "@workspace/db";
 import { eq, asc } from "drizzle-orm";
-import { requireAuth } from "../lib/auth";
+import { requireAuth, requireAdmin } from "../lib/auth";
 
 const SEED_DATA = [
   { category: "ORMOC CITY", items: ["Ebony St.", "Imelda Avenue", "Juan Luna St.", "Obrero St.", "Port Area", "Public Market", "Sabang", "Superdome (Arradaza St.)", "Terminal Area", "Bonifacio St.", "JT Kangleon St.", "Real St.", "Rizal Ext.", "Rizal St.", "San Juaquin St.", "San Nicolas St.", "San Vidal St.", "Solidor St.", "Arradaza St.", "Carlos Tan St.", "Cataag St.", "J. Navarro St.", "Mabini St.", "Osmeña St.", "Superdome", "Burgos St.", "Food Court", "San Pedro St.", "Agua Dulce St.", "San Pablo St.", "Aviles St.", "Lopez Jaena St."] },
@@ -38,7 +38,7 @@ router.get("/jurisdictions", async (_req, res): Promise<void> => {
   res.json({ categories });
 });
 
-router.post("/jurisdictions", requireAuth, async (req, res): Promise<void> => {
+router.post("/jurisdictions", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const { name, category } = req.body as { name?: string; category?: string };
   if (!name || typeof name !== "string" || !name.trim()) {
     res.status(400).json({ error: "name is required" });
@@ -52,7 +52,7 @@ router.post("/jurisdictions", requireAuth, async (req, res): Promise<void> => {
   res.status(201).json(created);
 });
 
-router.put("/jurisdictions/:id", requireAuth, async (req, res): Promise<void> => {
+router.put("/jurisdictions/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id) || id <= 0) {
     res.status(400).json({ error: "Invalid id" });
@@ -78,7 +78,7 @@ router.put("/jurisdictions/:id", requireAuth, async (req, res): Promise<void> =>
   res.json(updated);
 });
 
-router.delete("/jurisdictions/:id", requireAuth, async (req, res): Promise<void> => {
+router.delete("/jurisdictions/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id) || id <= 0) {
     res.status(400).json({ error: "Invalid id" });

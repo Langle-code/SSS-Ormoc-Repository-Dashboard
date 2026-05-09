@@ -9,7 +9,7 @@ import {
   DeleteDocumentParams,
   GetUploadUrlBody,
 } from "@workspace/api-zod";
-import { requireAuth } from "../lib/auth";
+import { requireAuth, requireAdmin } from "../lib/auth";
 import { supabase, BUCKET_NAME } from "../lib/supabase";
 import { randomUUID } from "crypto";
 
@@ -68,7 +68,7 @@ router.get("/documents", requireAuth, async (req, res): Promise<void> => {
   res.json(docs);
 });
 
-router.post("/documents", requireAuth, async (req, res): Promise<void> => {
+router.post("/documents", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const parsed = UploadDocumentBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -135,7 +135,7 @@ router.get("/documents/:id", requireAuth, async (req, res): Promise<void> => {
   res.json(doc);
 });
 
-router.patch("/documents/:id", requireAuth, async (req, res): Promise<void> => {
+router.patch("/documents/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = UpdateDocumentStatusParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -168,7 +168,7 @@ router.patch("/documents/:id", requireAuth, async (req, res): Promise<void> => {
   });
 });
 
-router.delete("/documents/:id", requireAuth, async (req, res): Promise<void> => {
+router.delete("/documents/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = DeleteDocumentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -187,7 +187,7 @@ router.delete("/documents/:id", requireAuth, async (req, res): Promise<void> => 
   res.sendStatus(204);
 });
 
-router.post("/documents/upload-url", requireAuth, async (req, res): Promise<void> => {
+router.post("/documents/upload-url", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const parsed = GetUploadUrlBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });

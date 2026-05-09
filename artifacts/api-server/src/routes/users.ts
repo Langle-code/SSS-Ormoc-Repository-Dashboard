@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { db, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { UpdateUserParams, UpdateUserBody, DeleteUserParams } from "@workspace/api-zod";
-import { requireAuth } from "../lib/auth";
+import { requireAuth, requireAdmin } from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -20,7 +20,7 @@ router.get("/users", requireAuth, async (_req, res): Promise<void> => {
   res.json(users);
 });
 
-router.patch("/users/:id", requireAuth, async (req, res): Promise<void> => {
+router.patch("/users/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = UpdateUserParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -59,7 +59,7 @@ router.patch("/users/:id", requireAuth, async (req, res): Promise<void> => {
   });
 });
 
-router.delete("/users/:id", requireAuth, async (req, res): Promise<void> => {
+router.delete("/users/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = DeleteUserParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });

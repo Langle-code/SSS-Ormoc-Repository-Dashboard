@@ -8,7 +8,7 @@ import {
   UpdateEmployerBody,
   DeleteEmployerParams,
 } from "@workspace/api-zod";
-import { requireAuth } from "../lib/auth";
+import { requireAuth, requireAdmin } from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -41,7 +41,7 @@ router.get("/employers", requireAuth, async (req, res): Promise<void> => {
   res.json(employers);
 });
 
-router.post("/employers", requireAuth, async (req, res): Promise<void> => {
+router.post("/employers", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const parsed = CreateEmployerBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -68,7 +68,7 @@ router.get("/employers/:id", requireAuth, async (req, res): Promise<void> => {
   res.json(employer);
 });
 
-router.patch("/employers/:id", requireAuth, async (req, res): Promise<void> => {
+router.patch("/employers/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = UpdateEmployerParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -94,7 +94,7 @@ router.patch("/employers/:id", requireAuth, async (req, res): Promise<void> => {
   res.json(employer);
 });
 
-router.delete("/employers/:id", requireAuth, async (req, res): Promise<void> => {
+router.delete("/employers/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const params = DeleteEmployerParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
