@@ -7,7 +7,8 @@ import {
   FileCheck2,
   History,
   LogOut,
-  Building2
+  Building2,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: "/verify", label: "Verify Documents", icon: FileCheck2, roles: ["admin", "account_officer"] },
   { href: "/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/login-history", label: "Login History", icon: History, roles: ["admin"] },
+  { href: "/jurisdictions", label: "Jurisdictions", icon: MapPin, roles: ["admin"] },
 ];
 
 export function Sidebar() {

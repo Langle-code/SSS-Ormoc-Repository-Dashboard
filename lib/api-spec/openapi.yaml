@@ -465,6 +465,80 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/JurisdictionList"
+    post:
+      operationId: createJurisdiction
+      tags: [jurisdictions]
+      summary: Create a new jurisdiction (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJurisdictionBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JurisdictionItem"
+
+  /jurisdictions/all:
+    get:
+      operationId: listAllJurisdictions
+      tags: [jurisdictions]
+      summary: List all jurisdictions as a flat list with IDs (admin only)
+      responses:
+        "200":
+          description: All jurisdictions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JurisdictionItem"
+
+  /jurisdictions/{id}:
+    put:
+      operationId: updateJurisdiction
+      tags: [jurisdictions]
+      summary: Update a jurisdiction (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateJurisdictionBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JurisdictionItem"
+    delete:
+      operationId: deleteJurisdiction
+      tags: [jurisdictions]
+      summary: Delete a jurisdiction (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
 
 components:
   schemas:
@@ -811,6 +885,43 @@ components:
         - jurisdiction
         - browser
         - loginAt
+
+    JurisdictionItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - category
+        - createdAt
+
+    CreateJurisdictionBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+      required:
+        - name
+        - category
+
+    UpdateJurisdictionBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
 
     JurisdictionCategory:
       type: object

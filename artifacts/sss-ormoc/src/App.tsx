@@ -14,6 +14,7 @@ import UploadForm from "@/pages/upload";
 import VerifyDocuments from "@/pages/verify";
 import UsersPage from "@/pages/users";
 import LoginHistory from "@/pages/login-history";
+import JurisdictionsPage from "@/pages/jurisdictions";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/verify" component={VerifyDocuments} />
       <Route path="/users" component={UsersPage} />
       <Route path="/login-history" component={LoginHistory} />
+      <Route path="/jurisdictions" component={JurisdictionsPage} />
       <Route component={NotFound} />
     </Switch>
   );

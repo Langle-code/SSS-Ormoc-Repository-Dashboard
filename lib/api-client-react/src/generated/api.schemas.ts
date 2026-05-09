@@ -197,6 +197,23 @@ export interface LoginHistoryEntry {
   loginAt: string;
 }
 
+export interface JurisdictionItem {
+  id: number;
+  name: string;
+  category: string;
+  createdAt: string;
+}
+
+export interface CreateJurisdictionBody {
+  name: string;
+  category: string;
+}
+
+export interface UpdateJurisdictionBody {
+  name?: string;
+  category?: string;
+}
+
 export interface JurisdictionCategory {
   category: string;
   items: string[];

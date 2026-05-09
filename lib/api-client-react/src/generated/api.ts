@@ -19,6 +19,7 @@ import type {
 import type {
   AuthUser,
   CreateEmployerBody,
+  CreateJurisdictionBody,
   DashboardStats,
   Document,
   Employer,
@@ -26,6 +27,7 @@ import type {
   GetDashboardStatsParams,
   GetUploadUrlBody,
   HealthStatus,
+  JurisdictionItem,
   JurisdictionList,
   ListDocumentsParams,
   ListEmployersParams,
@@ -36,6 +38,7 @@ import type {
   SuccessResponse,
   UpdateDocumentStatusBody,
   UpdateEmployerBody,
+  UpdateJurisdictionBody,
   UpdateUserBody,
   UploadDocumentBody,
   UploadUrlResponse,
@@ -1968,3 +1971,335 @@ export function useListJurisdictions<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Create a new jurisdiction (admin only)
+ */
+export const getCreateJurisdictionUrl = () => {
+  return `/api/jurisdictions`;
+};
+
+export const createJurisdiction = async (
+  createJurisdictionBody: CreateJurisdictionBody,
+  options?: RequestInit,
+): Promise<JurisdictionItem> => {
+  return customFetch<JurisdictionItem>(getCreateJurisdictionUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createJurisdictionBody),
+  });
+};
+
+export const getCreateJurisdictionMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createJurisdiction>>,
+    TError,
+    { data: BodyType<CreateJurisdictionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createJurisdiction>>,
+  TError,
+  { data: BodyType<CreateJurisdictionBody> },
+  TContext
+> => {
+  const mutationKey = ["createJurisdiction"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createJurisdiction>>,
+    { data: BodyType<CreateJurisdictionBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createJurisdiction(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateJurisdictionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createJurisdiction>>
+>;
+export type CreateJurisdictionMutationBody = BodyType<CreateJurisdictionBody>;
+export type CreateJurisdictionMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a new jurisdiction (admin only)
+ */
+export const useCreateJurisdiction = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createJurisdiction>>,
+    TError,
+    { data: BodyType<CreateJurisdictionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createJurisdiction>>,
+  TError,
+  { data: BodyType<CreateJurisdictionBody> },
+  TContext
+> => {
+  return useMutation(getCreateJurisdictionMutationOptions(options));
+};
+
+/**
+ * @summary List all jurisdictions as a flat list with IDs (admin only)
+ */
+export const getListAllJurisdictionsUrl = () => {
+  return `/api/jurisdictions/all`;
+};
+
+export const listAllJurisdictions = async (
+  options?: RequestInit,
+): Promise<JurisdictionItem[]> => {
+  return customFetch<JurisdictionItem[]>(getListAllJurisdictionsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListAllJurisdictionsQueryKey = () => {
+  return [`/api/jurisdictions/all`] as const;
+};
+
+export const getListAllJurisdictionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAllJurisdictions>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAllJurisdictions>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListAllJurisdictionsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listAllJurisdictions>>
+  > = ({ signal }) => listAllJurisdictions({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAllJurisdictions>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListAllJurisdictionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAllJurisdictions>>
+>;
+export type ListAllJurisdictionsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all jurisdictions as a flat list with IDs (admin only)
+ */
+
+export function useListAllJurisdictions<
+  TData = Awaited<ReturnType<typeof listAllJurisdictions>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAllJurisdictions>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListAllJurisdictionsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update a jurisdiction (admin only)
+ */
+export const getUpdateJurisdictionUrl = (id: number) => {
+  return `/api/jurisdictions/${id}`;
+};
+
+export const updateJurisdiction = async (
+  id: number,
+  updateJurisdictionBody: UpdateJurisdictionBody,
+  options?: RequestInit,
+): Promise<JurisdictionItem> => {
+  return customFetch<JurisdictionItem>(getUpdateJurisdictionUrl(id), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateJurisdictionBody),
+  });
+};
+
+export const getUpdateJurisdictionMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateJurisdiction>>,
+    TError,
+    { id: number; data: BodyType<UpdateJurisdictionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateJurisdiction>>,
+  TError,
+  { id: number; data: BodyType<UpdateJurisdictionBody> },
+  TContext
+> => {
+  const mutationKey = ["updateJurisdiction"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateJurisdiction>>,
+    { id: number; data: BodyType<UpdateJurisdictionBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateJurisdiction(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateJurisdictionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateJurisdiction>>
+>;
+export type UpdateJurisdictionMutationBody = BodyType<UpdateJurisdictionBody>;
+export type UpdateJurisdictionMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a jurisdiction (admin only)
+ */
+export const useUpdateJurisdiction = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateJurisdiction>>,
+    TError,
+    { id: number; data: BodyType<UpdateJurisdictionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateJurisdiction>>,
+  TError,
+  { id: number; data: BodyType<UpdateJurisdictionBody> },
+  TContext
+> => {
+  return useMutation(getUpdateJurisdictionMutationOptions(options));
+};
+
+/**
+ * @summary Delete a jurisdiction (admin only)
+ */
+export const getDeleteJurisdictionUrl = (id: number) => {
+  return `/api/jurisdictions/${id}`;
+};
+
+export const deleteJurisdiction = async (
+  id: number,
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(getDeleteJurisdictionUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteJurisdictionMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteJurisdiction>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteJurisdiction>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteJurisdiction"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteJurisdiction>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteJurisdiction(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteJurisdictionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteJurisdiction>>
+>;
+
+export type DeleteJurisdictionMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a jurisdiction (admin only)
+ */
+export const useDeleteJurisdiction = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteJurisdiction>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteJurisdiction>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteJurisdictionMutationOptions(options));
+};

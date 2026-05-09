@@ -331,3 +331,54 @@ export const ListJurisdictionsResponse = zod.object({
     }),
   ),
 });
+
+/**
+ * @summary Create a new jurisdiction (admin only)
+ */
+export const CreateJurisdictionBody = zod.object({
+  name: zod.string(),
+  category: zod.string(),
+});
+
+/**
+ * @summary List all jurisdictions as a flat list with IDs (admin only)
+ */
+export const ListAllJurisdictionsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  category: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAllJurisdictionsResponse = zod.array(
+  ListAllJurisdictionsResponseItem,
+);
+
+/**
+ * @summary Update a jurisdiction (admin only)
+ */
+export const UpdateJurisdictionParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateJurisdictionBody = zod.object({
+  name: zod.string().optional(),
+  category: zod.string().optional(),
+});
+
+export const UpdateJurisdictionResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  category: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a jurisdiction (admin only)
+ */
+export const DeleteJurisdictionParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteJurisdictionResponse = zod.object({
+  message: zod.string(),
+});
