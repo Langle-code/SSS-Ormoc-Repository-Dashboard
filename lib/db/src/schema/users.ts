@@ -11,6 +11,8 @@ export const usersTable = pgTable("users", {
   jurisdictions: text("jurisdictions").array().notNull().default([]),
   loginCount: integer("login_count").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  resetToken: text("reset_token"),
+  resetTokenExpiry: timestamp("reset_token_expiry", { withTimezone: true }),
 });
 
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, loginCount: true });

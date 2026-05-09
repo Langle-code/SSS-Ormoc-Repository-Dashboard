@@ -9,6 +9,7 @@ import {
   LogOut,
   Building2,
   MapPin,
+  Tags,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { href: "/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/login-history", label: "Login History", icon: History, roles: ["admin"] },
   { href: "/jurisdictions", label: "Jurisdictions", icon: MapPin, roles: ["admin"] },
+  { href: "/document-types", label: "Document Types", icon: Tags, roles: ["admin"] },
 ];
 
 export function Sidebar() {

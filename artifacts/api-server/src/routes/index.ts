@@ -7,6 +7,7 @@ import documentsRouter from "./documents";
 import dashboardRouter from "./dashboard";
 import loginHistoryRouter from "./loginHistory";
 import jurisdictionsRouter from "./jurisdictions";
+import documentTypesRouter from "./document-types";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(documentsRouter);
 router.use(dashboardRouter);
 router.use(loginHistoryRouter);
 router.use(jurisdictionsRouter);
+router.use(documentTypesRouter);
 
 export default router;

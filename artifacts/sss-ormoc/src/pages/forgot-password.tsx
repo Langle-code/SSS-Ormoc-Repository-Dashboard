@@ -1,7 +1,50 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { supabase } from "@/lib/supabase";
 import { MailCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+function GeometricBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[#0a1a3f]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(8,185,255,0.18),transparent_26%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_55%)]" />
+      <div
+        className="absolute inset-0 opacity-25 mix-blend-screen"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at center, rgba(0,200,255,0.35) 0 2px, transparent 2px), radial-gradient(circle at center, rgba(255,255,255,0.12) 0 1px, transparent 1px)",
+          backgroundSize: "90px 90px, 36px 36px",
+          backgroundPosition: "0 0, 18px 18px",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-35"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, transparent 46%, rgba(0,200,255,0.22) 47%, rgba(0,200,255,0.22) 49%, transparent 50%), linear-gradient(45deg, transparent 46%, rgba(255,255,255,0.12) 47%, rgba(255,255,255,0.12) 49%, transparent 50%)",
+          backgroundSize: "120px 120px",
+        }}
+      />
+      <div className="absolute top-8 left-8 h-24 w-24 rounded-full border border-white/10 bg-white/5" />
+      <div className="absolute top-24 right-16 h-36 w-36 rounded-3xl border border-cyan-300/10 bg-cyan-300/5 rotate-12" />
+      <div className="absolute bottom-14 left-12 h-28 w-28 rounded-2xl border border-white/10 bg-white/5 -rotate-12" />
+      <div className="absolute bottom-20 right-8 h-20 w-20 rounded-full border border-cyan-300/20 bg-cyan-300/10" />
+    </div>
+  );
+}
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -14,107 +57,123 @@ export default function ForgotPassword() {
     setError("");
     setLoading(true);
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+    try {
+      const res = await fetch(`${BASE}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    setLoading(false);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
 
-    if (resetError) {
-      setError(resetError.message);
-      return;
+      setSent(true);
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setSent(true);
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel */}
-      <div
-        className="hidden md:flex flex-col items-center justify-center w-5/12 relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #0d2c6e 0%, #1a4bb5 50%, #0e5a8a 100%)" }}
-      >
-        <div className="absolute top-[-80px] left-[-80px] w-64 h-64 rounded-full opacity-20" style={{ background: "rgba(255,255,255,0.15)" }} />
-        <div className="absolute bottom-[-60px] right-[-60px] w-52 h-52 rounded-full opacity-20" style={{ background: "rgba(255,255,255,0.15)" }} />
-        <div className="relative z-10 flex flex-col items-center text-center px-10">
-          <div className="bg-white/15 rounded-xl p-3 mb-8">
-            <img src="/sss-logo.png" alt="SSS Logo" className="w-20 h-16 object-contain" />
+    <div className="flex min-h-screen bg-background">
+      {/* Left panel */}
+      <div className="relative hidden overflow-hidden lg:flex lg:w-[44%] flex-col text-white">
+        <GeometricBackground />
+        <div className="relative z-10 flex h-full flex-col justify-between px-10 py-10 xl:px-14">
+          <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
+            <div className="mb-6 rounded-2xl border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-sm">
+              <img src="/sss-logo.png" alt="SSS Logo" className="h-20 w-20 object-contain" />
+            </div>
+            <p className="mb-2 text-xs font-semibold tracking-[0.35em] text-white/70 uppercase">
+              SSS ORMOC BRANCH
+            </p>
+            <h1 className="max-w-sm text-4xl font-extrabold leading-tight xl:text-5xl">
+              SSS Ormoc Branch Innovation
+            </h1>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
+              Digital R-1/R-1A Repository and Dashboard
+            </p>
           </div>
-          <p className="text-blue-200 text-xs font-semibold tracking-widest uppercase mb-3">SSS Ormoc Branch</p>
-          <h1 className="text-white text-3xl font-bold leading-tight">
-            Digital R-1/R-1A<br />Repository and<br />Dashboard
-          </h1>
+          <p className="relative z-10 text-center text-xs text-white/45">
+            AB 2026. All rights reserved. Tenshi Inc.
+          </p>
         </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="flex-1 flex flex-col justify-between bg-gray-50">
-        <div className="flex-1 flex items-center justify-center px-8 py-12">
+      {/* Right panel */}
+      <div className="flex w-full items-center justify-center px-6 py-10 lg:w-[56%]">
+        <div className="w-full max-w-md space-y-8">
           {sent ? (
-            <div className="w-full max-w-sm text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                <MailCheck size={32} className="text-blue-600" />
+            <div className="text-center space-y-4">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <MailCheck className="h-8 w-8 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
-              <p className="text-sm text-gray-500 mb-2">We sent a password reset link to</p>
-              <p className="text-sm font-semibold text-gray-800 mb-5">{email}</p>
-              <p className="text-sm text-gray-500 mb-8">
-                Click the link in the email to set a new password. The link expires in 1 hour.
-              </p>
-              <Link
-                href="/login"
-                className="inline-block w-full py-2.5 rounded-lg bg-blue-700 text-white text-sm font-semibold hover:bg-blue-800 transition-colors text-center"
-              >
-                Back to Sign In
-              </Link>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Check your email</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  We sent a password reset link to
+                </p>
+                <p className="text-sm font-semibold text-foreground mt-1">{email}</p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Click the link in the email to set a new password. The link expires in 1 hour.
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  If you don't receive it, please contact your system administrator.
+                </p>
+              </div>
+              <Button asChild className="w-full h-11">
+                <Link href="/login">Back to Sign In</Link>
+              </Button>
             </div>
           ) : (
-            <div className="w-full max-w-sm">
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Forgot password?</h2>
-              <p className="text-sm text-gray-500 mb-8">
-                Enter your official email and we'll send you a reset link.
-              </p>
+            <>
+              <div className="text-center lg:text-left">
+                <h2 className="text-3xl font-bold tracking-tight text-foreground">Forgot password?</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Enter your official email and we'll send you a reset link.
+                </p>
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Official Email</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">Official Email</Label>
+                  <Input
+                    id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="juan@sss.gov.ph"
                     required
-                    className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   />
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">
+                  <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
                     {error}
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-2.5 rounded-lg bg-blue-700 text-white text-sm font-semibold hover:bg-blue-800 transition-colors disabled:opacity-60"
-                >
+                <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
                   {loading ? "Sending..." : "Send Reset Link"}
-                </button>
+                </Button>
               </form>
 
-              <p className="text-center text-sm text-gray-500 mt-6">
-                Remember your password?{" "}
-                <Link href="/login" className="text-blue-600 hover:underline font-medium">
-                  Sign in
-                </Link>
-              </p>
-            </div>
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Remember your password?{" "}
+                  <Link href="/login" className="font-semibold text-primary hover:underline">
+                    Sign in
+                  </Link>
+                </p>
+                <Separator />
+                <p className="text-xs text-muted-foreground">AB 2026. All rights reserved. Tenshi Inc.</p>
+              </div>
+            </>
           )}
-        </div>
-        <div className="text-center py-4 border-t border-gray-200">
-          <p className="text-xs text-gray-400">AB 2026. All rights reserved. Tenshi Inc.</p>
         </div>
       </div>
     </div>
