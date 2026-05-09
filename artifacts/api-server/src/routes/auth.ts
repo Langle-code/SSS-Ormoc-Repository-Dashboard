@@ -85,14 +85,20 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
+  const newLoginCount = user.loginCount + 1;
+  const showSurvey = newLoginCount % 5 === 0;
+
   res.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    jurisdictions: user.jurisdictions,
-    loginCount: user.loginCount + 1,
-    surveyUrl: SURVEY_URL,
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      jurisdictions: user.jurisdictions,
+      loginCount: newLoginCount,
+    },
+    showSurvey,
+    surveyUrl: showSurvey ? SURVEY_URL : undefined,
   });
 });
 
