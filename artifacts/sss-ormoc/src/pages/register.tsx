@@ -44,7 +44,7 @@ export default function Register() {
 
   const allJurisdictions = useMemo(() => {
     if (!jurisdictionData?.categories) return [];
-    return jurisdictionData.categories.flatMap((cat) => cat.items);
+    return [...jurisdictionData.categories.flatMap((cat) => cat.items)].sort((a, b) => a.localeCompare(b));
   }, [jurisdictionData]);
 
   const role = form.watch("role");
@@ -75,9 +75,9 @@ export default function Register() {
   return (
     <div className="flex min-h-screen bg-background">
       <div className="hidden lg:flex lg:w-1/2 flex-col bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 z-0" />
+        <div className="absolute inset-0 bg-[#0a1a3f] z-0" />
         <div
-          className="absolute inset-0 opacity-10 mix-blend-overlay z-0"
+          className="absolute inset-0 opacity-20 mix-blend-overlay z-0"
           style={{
             backgroundImage:
               'url("https://images.unsplash.com/photo-1577415124269-3187ca0ee0be?auto=format&fit=crop&q=80&w=2000")',
@@ -86,16 +86,19 @@ export default function Register() {
           }}
         />
         <div className="relative z-10 flex flex-col flex-1 items-center justify-center text-center px-12">
-          <img
-            src="/sss-logo.png"
-            alt="SSS Logo"
-            className="h-28 w-28 rounded-xl object-contain mb-6 shadow-lg"
-          />
+          <div className="mb-6 rounded-xl bg-white/10 p-3">
+            <img src="/sss-logo.png" alt="SSS Logo" className="h-24 w-24 object-contain" />
+          </div>
           <h1 className="text-3xl font-extrabold tracking-tight leading-tight">SSS</h1>
-          <h2 className="text-xl font-semibold mt-1">Ormoc Branch</h2>
-          <p className="mt-3 text-lg font-medium text-primary-foreground/90 leading-snug">
+          <h2 className="mt-1 text-xl font-semibold">Ormoc Branch</h2>
+          <p className="mt-3 text-lg font-medium leading-snug text-primary-foreground/90">
             SSS Digital Repository<br />and Dashboard
           </p>
+          <div className="mt-10 grid grid-cols-3 gap-4 text-[#00c8ff]">
+            <div className="flex h-20 w-20 items-center justify-center rounded-xl border-2 border-[#00c8ff] bg-white/10 animate-pulse">010</div>
+            <div className="flex h-20 w-20 items-center justify-center rounded-xl border-2 border-[#00c8ff] bg-white/10 animate-pulse">◔</div>
+            <div className="flex h-20 w-20 items-center justify-center rounded-xl border-2 border-[#00c8ff] bg-white/10 animate-pulse">▁▃▆</div>
+          </div>
         </div>
         <div className="relative z-10 pb-6 text-center">
           <p className="text-xs text-primary-foreground/50">
@@ -186,20 +189,13 @@ export default function Register() {
                     {role === "admin" && (
                       <SelectItem value="All Jurisdictions">All Jurisdictions</SelectItem>
                     )}
-                    {jurisdictionData?.categories?.map((cat) => (
-                      <div key={cat.category}>
-                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                          {cat.category}
-                        </div>
-                        {cat.items.map((item) => (
-                          <SelectItem key={item} value={item}>{item}</SelectItem>
-                        ))}
-                      </div>
+                    {allJurisdictions.map((item) => (
+                      <SelectItem key={item} value={item}>{item}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {selectedJurisdictions.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="mt-2 flex flex-wrap gap-1">
                     {selectedJurisdictions.map((j) => (
                       <Badge key={j} variant="secondary" className="gap-1">
                         {j}
