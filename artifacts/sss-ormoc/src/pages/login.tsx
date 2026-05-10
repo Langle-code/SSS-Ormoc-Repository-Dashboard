@@ -88,15 +88,12 @@ export default function Login() {
             <div className="mb-6 rounded-2xl border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-sm">
               <img src="/sss-logo.png" alt="SSS Logo" className="h-20 w-20 object-contain" />
             </div>
-            <p className="mb-2 text-xs font-semibold tracking-[0.35em] text-white/70 uppercase">
-              SSS ORMOC BRANCH
-            </p>
-            <h1 className="max-w-sm text-4xl font-extrabold leading-tight xl:text-5xl">
+            <p className="mb-3 max-w-sm text-base font-medium tracking-wide text-white/70">
               SSS Ormoc Branch Innovation
-            </h1>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
-              Digital R-1/R-1A Repository and Dashboard
             </p>
+            <h1 className="max-w-md text-4xl font-extrabold leading-tight xl:text-5xl">
+              Digital R-1/R-1A Repository and Dashboard
+            </h1>
             <div className="mt-10 flex items-center gap-4 text-cyan-200/80">
               <div className="h-px w-12 bg-gradient-to-r from-transparent to-cyan-200/60" />
               <div className="grid grid-cols-3 gap-3">
