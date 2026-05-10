@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useGetMe, useLogin, useLogout, useRegister } from "@workspace/api-client-react";
-import type { AuthUser, LoginBody, RegisterBody } from "@workspace/api-client-react/src/generated/api.schemas";
+import type { AuthUser, LoginBody, RegisterBody } from "@workspace/api-client-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: meData, isLoading: isMeLoading, error: meError } = useGetMe({ query: { retry: false } });
+  const { data: meData, isLoading: isMeLoading, error: meError } = useGetMe({ query: { retry: false, queryKey: ["/api/auth/me"] } });
   
   const loginMutation = useLogin();
   const registerMutation = useRegister();

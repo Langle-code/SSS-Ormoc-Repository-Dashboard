@@ -8,7 +8,7 @@ import {
   useListJurisdictions,
   getListEmployersQueryKey,
 } from "@workspace/api-client-react";
-import type { Employer } from "@workspace/api-client-react/src/generated/api.schemas";
+import type { Employer } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

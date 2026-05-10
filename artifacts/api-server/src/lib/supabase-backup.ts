@@ -65,31 +65,39 @@ async function syncTable(
   const colList = cols.join(",");
 
   const { rows } = await primaryPool.query(`SELECT ${colList} FROM ${table}`);
-  if (rows.length === 0) {
-    return { table, synced: 0 };
-  }
 
-  // Replace the backup table contents with the primary snapshot. Use a
-  // transaction so the backup is never observed in a half-written state.
+  // Replace the backup table contents with the primary snapshot. Always run
+  // the TRUNCATE — even when the primary is empty — so the mirror stays in
+  // sync if rows are deleted upstream. The transaction keeps the backup from
+  // ever being observed in a half-written state.
   const client = await backup.connect();
   try {
     await client.query("BEGIN");
     await client.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
 
-    const placeholders: string[] = [];
-    const params: unknown[] = [];
-    let p = 1;
-    for (const r of rows) {
-      placeholders.push(`(${cols.map(() => `$${p++}`).join(",")})`);
-      for (const c of cols) params.push(r[c]);
+    if (rows.length > 0) {
+      // Postgres caps bound parameters at 65535 per statement. Chunk inserts
+      // so very large tables stay well under that limit.
+      const maxParamsPerStmt = 60000;
+      const rowsPerChunk = Math.max(1, Math.floor(maxParamsPerStmt / cols.length));
+      for (let i = 0; i < rows.length; i += rowsPerChunk) {
+        const chunk = rows.slice(i, i + rowsPerChunk);
+        const placeholders: string[] = [];
+        const params: unknown[] = [];
+        let p = 1;
+        for (const r of chunk) {
+          placeholders.push(`(${cols.map(() => `$${p++}`).join(",")})`);
+          for (const c of cols) params.push(r[c]);
+        }
+        await client.query(
+          `INSERT INTO ${table} (${colList}) VALUES ${placeholders.join(",")}`,
+          params,
+        );
+      }
+      await client.query(
+        `SELECT setval(pg_get_serial_sequence('${table}','id'), (SELECT MAX(id) FROM ${table}), true)`,
+      );
     }
-    await client.query(
-      `INSERT INTO ${table} (${colList}) VALUES ${placeholders.join(",")}`,
-      params,
-    );
-    await client.query(
-      `SELECT setval(pg_get_serial_sequence('${table}','id'), COALESCE((SELECT MAX(id) FROM ${table}), 1), true)`,
-    );
     await client.query("COMMIT");
   } catch (err) {
     await client.query("ROLLBACK");

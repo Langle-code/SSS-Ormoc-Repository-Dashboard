@@ -38,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
-import type { JurisdictionItem } from "@workspace/api-client-react/src/generated/api.schemas";
+import type { JurisdictionItem } from "@workspace/api-client-react";
 
 const CATEGORIES = ["ORMOC CITY", "BARANGAY", "TOWN"];
 
