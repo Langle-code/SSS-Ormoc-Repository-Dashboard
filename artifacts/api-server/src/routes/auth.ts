@@ -5,12 +5,14 @@ import { eq, sql } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
 import { requireAuth, requireAdmin } from "../lib/auth";
+void requireAuth;
+void requireAdmin;
 
 const SURVEY_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAFiB1KRUMjhFUFZNTEhCOExCRlcwRVI1Q0dXWkpWTS4uUSe";
 
 const router: IRouter = Router();
 
-router.post("/auth/register", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.post("/auth/register", async (req, res): Promise<void> => {
   const parsed = RegisterBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -19,7 +21,11 @@ router.post("/auth/register", requireAuth, requireAdmin, async (req, res): Promi
 
   const { email, password, name, role, jurisdictions } = parsed.data;
 
-  const existing = await db.select().from(usersTable).where(eq(usersTable.email, email));
+  // If an authenticated admin is making the request, they're creating an account
+  // for someone else — don't change their session. Otherwise this is public self-signup.
+  const isAdminCreating = !!req.session?.userId;
+
+  const existing = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase().trim()));
   if (existing.length > 0) {
     res.status(400).json({ error: "Email already registered" });
     return;
@@ -27,14 +33,23 @@ router.post("/auth/register", requireAuth, requireAdmin, async (req, res): Promi
 
   const passwordHash = await bcryptjs.hash(password, 10);
   const [user] = await db.insert(usersTable).values({
-    email,
+    email: email.toLowerCase().trim(),
     passwordHash,
     name,
     role,
     jurisdictions,
   }).returning();
 
-  // Do NOT set a cookie here — the admin creating this account should stay logged in as themselves
+  // For self-signup, set a session cookie so they're logged in immediately
+  if (!isAdminCreating) {
+    res.cookie("userId", String(user.id), {
+      signed: true,
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  }
+
   res.status(201).json({
     id: user.id,
     email: user.email,

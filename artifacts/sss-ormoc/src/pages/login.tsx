@@ -161,6 +161,13 @@ export default function Login() {
             </form>
           </Form>
 
+          <p className="text-center text-sm text-muted-foreground">
+            Don't have an account?{" "}
+            <Link href="/register" className="font-semibold text-primary hover:underline" data-testid="link-register">
+              Create one
+            </Link>
+          </p>
+
           <div className="space-y-4 text-center">
             <Separator />
             <p className="text-xs text-muted-foreground">AB 2026. All rights reserved. Tenshi Inc.</p>
