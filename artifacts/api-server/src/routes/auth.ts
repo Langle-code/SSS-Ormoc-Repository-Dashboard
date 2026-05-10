@@ -34,13 +34,7 @@ router.post("/auth/register", requireAuth, requireAdmin, async (req, res): Promi
     jurisdictions,
   }).returning();
 
-  res.cookie("userId", String(user.id), {
-    signed: true,
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
+  // Do NOT set a cookie here — the admin creating this account should stay logged in as themselves
   res.status(201).json({
     id: user.id,
     email: user.email,
@@ -111,6 +105,8 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
 
   const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase().trim()));
 
+  let resetUrl: string | null = null;
+
   if (user) {
     const token = randomBytes(32).toString("hex");
     const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
@@ -118,10 +114,18 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
     await db.update(usersTable)
       .set({ resetToken: token, resetTokenExpiry: expiry })
       .where(eq(usersTable.id, user.id));
+
+    // Return the reset URL directly (internal system — no email server available)
+    const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
+    resetUrl = `${origin}/reset-password?token=${token}`;
   }
 
-  // Always return success regardless of whether email exists (security practice)
-  res.json({ message: "If that email exists, a reset link has been sent." });
+  res.json({
+    message: resetUrl
+      ? "Reset link generated. Copy it and open in a browser to reset your password."
+      : "If that email exists, a reset link will be shown.",
+    resetUrl,
+  });
 });
 
 router.post("/auth/reset-password", async (req, res): Promise<void> => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Layout } from "@/components/layout";
 import {
   useListUsers,
@@ -36,14 +36,25 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X, UserPlus, Loader2 } from "lucide-react";
 import type { User } from "@workspace/api-client-react/src/generated/api.schemas";
+
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export default function Users() {
   const [editUser, setEditUser] = useState<User | null>(null);
   const [editName, setEditName] = useState("");
   const [editRole, setEditRole] = useState<string>("");
   const [editJurisdictions, setEditJurisdictions] = useState<string[]>([]);
+
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newRole, setNewRole] = useState<"admin" | "account_officer">("account_officer");
+  const [newJurisdictions, setNewJurisdictions] = useState<string[]>([]);
+  const [addLoading, setAddLoading] = useState(false);
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -52,6 +63,14 @@ export default function Users() {
   const updateMutation = useUpdateUser();
   const deleteMutation = useDeleteUser();
 
+  const allJurisdictions = useMemo(() => {
+    if (!jurisdictionData?.categories) return [];
+    return [...jurisdictionData.categories.flatMap((cat) => cat.items)].sort((a, b) =>
+      a.localeCompare(b)
+    );
+  }, [jurisdictionData]);
+
+  // ── Edit user ──────────────────────────────────────────────
   const openEdit = (u: User) => {
     setEditUser(u);
     setEditName(u.name);
@@ -70,7 +89,7 @@ export default function Users() {
       toast({ title: "User updated" });
       setEditUser(null);
     } catch {
-      toast({ title: "Error", variant: "destructive" });
+      toast({ title: "Failed to update user", variant: "destructive" });
     }
   };
 
@@ -81,30 +100,92 @@ export default function Users() {
       queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
       toast({ title: "User deleted" });
     } catch {
-      toast({ title: "Error", variant: "destructive" });
+      toast({ title: "Failed to delete user", variant: "destructive" });
     }
   };
 
-  const addJurisdiction = (value: string) => {
+  const addJurisdiction = (value: string, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     if (value === "All Jurisdictions") {
-      setEditJurisdictions(["All Jurisdictions"]);
-    } else if (!editJurisdictions.includes(value)) {
-      setEditJurisdictions((prev) =>
-        prev.filter((j) => j !== "All Jurisdictions").concat(value)
-      );
+      setter(["All Jurisdictions"]);
+    } else {
+      setter((prev) => prev.filter((j) => j !== "All Jurisdictions").concat(
+        prev.includes(value) ? [] : [value]
+      ));
     }
   };
 
-  const removeJurisdiction = (value: string) => {
-    setEditJurisdictions((prev) => prev.filter((j) => j !== value));
+  const removeJurisdiction = (value: string, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
+    setter((prev) => prev.filter((j) => j !== value));
+  };
+
+  // ── Add user ──────────────────────────────────────────────
+  const resetAddForm = () => {
+    setNewName("");
+    setNewEmail("");
+    setNewPassword("");
+    setNewRole("account_officer");
+    setNewJurisdictions([]);
+  };
+
+  const handleAddUser = async () => {
+    if (!newName.trim() || !newEmail.trim() || !newPassword.trim()) {
+      toast({ title: "All fields are required", variant: "destructive" });
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast({ title: "Password must be at least 6 characters", variant: "destructive" });
+      return;
+    }
+
+    setAddLoading(true);
+    try {
+      const res = await fetch(`${BASE}/api/auth/register`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName.trim(),
+          email: newEmail.trim(),
+          password: newPassword,
+          role: newRole,
+          jurisdictions: newJurisdictions,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        toast({
+          title: "Failed to create user",
+          description: data.error || "An error occurred",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
+      toast({ title: `User "${newName}" created successfully` });
+      setShowAddUser(false);
+      resetAddForm();
+    } catch {
+      toast({ title: "Network error", variant: "destructive" });
+    } finally {
+      setAddLoading(false);
+    }
   };
 
   return (
     <Layout>
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Users</h2>
-          <p className="text-muted-foreground">Manage system users and their roles</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Users</h2>
+            <p className="text-muted-foreground">Manage system users and their roles</p>
+          </div>
+          <Button onClick={() => setShowAddUser(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" />
+            Add User
+          </Button>
         </div>
 
         <Card>
@@ -171,6 +252,95 @@ export default function Users() {
         </Card>
       </div>
 
+      {/* ── Add User Dialog ── */}
+      <Dialog open={showAddUser} onOpenChange={(open) => { if (!open) { setShowAddUser(false); resetAddForm(); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label>Full Name</Label>
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Juan Dela Cruz"
+                data-testid="input-new-user-name"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Official Email</Label>
+              <Input
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="juan@sss.gov.ph"
+                data-testid="input-new-user-email"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Password</Label>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min. 6 characters"
+                data-testid="input-new-user-password"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Role</Label>
+              <Select value={newRole} onValueChange={(v) => setNewRole(v as any)}>
+                <SelectTrigger data-testid="select-new-user-role">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="account_officer">Account Officer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Jurisdictions</Label>
+              <Select onValueChange={(v) => addJurisdiction(v, setNewJurisdictions)}>
+                <SelectTrigger data-testid="select-new-user-jurisdiction">
+                  <SelectValue placeholder="Add jurisdiction..." />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {newRole === "admin" && (
+                    <SelectItem value="All Jurisdictions">All Jurisdictions</SelectItem>
+                  )}
+                  {allJurisdictions.map((item) => (
+                    <SelectItem key={item} value={item}>{item}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {newJurisdictions.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {newJurisdictions.map((j) => (
+                    <Badge key={j} variant="secondary" className="gap-1">
+                      {j}
+                      <button type="button" onClick={() => removeJurisdiction(j, setNewJurisdictions)}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setShowAddUser(false); resetAddForm(); }}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddUser} disabled={addLoading} data-testid="button-create-user">
+              {addLoading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Creating...</> : "Create User"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Edit User Dialog ── */}
       <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
         <DialogContent>
           <DialogHeader>
@@ -195,7 +365,7 @@ export default function Users() {
             </div>
             <div className="space-y-2">
               <Label>Jurisdictions</Label>
-              <Select onValueChange={addJurisdiction}>
+              <Select onValueChange={(v) => addJurisdiction(v, setEditJurisdictions)}>
                 <SelectTrigger data-testid="select-edit-user-jurisdiction">
                   <SelectValue placeholder="Add jurisdiction..." />
                 </SelectTrigger>
@@ -218,7 +388,7 @@ export default function Users() {
                   {editJurisdictions.map((j) => (
                     <Badge key={j} variant="secondary" className="gap-1">
                       {j}
-                      <button type="button" onClick={() => removeJurisdiction(j)}>
+                      <button type="button" onClick={() => removeJurisdiction(j, setEditJurisdictions)}>
                         <X className="h-3 w-3" />
                       </button>
                     </Badge>

@@ -162,12 +162,6 @@ export default function Login() {
           </Form>
 
           <div className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/register" className="font-semibold text-primary hover:underline">
-                Create an account
-              </Link>
-            </p>
             <Separator />
             <p className="text-xs text-muted-foreground">AB 2026. All rights reserved. Tenshi Inc.</p>
           </div>

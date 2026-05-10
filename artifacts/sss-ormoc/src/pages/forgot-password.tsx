@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { MailCheck } from "lucide-react";
+import { KeyRound, Copy, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,13 +49,16 @@ function GeometricBackground() {
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [resetUrl, setResetUrl] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+    setNotFound(false);
 
     try {
       const res = await fetch(`${BASE}/api/auth/forgot-password`, {
@@ -64,18 +67,30 @@ export default function ForgotPassword() {
         body: JSON.stringify({ email }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
         setError(data.error || "Something went wrong. Please try again.");
         return;
       }
 
-      setSent(true);
+      if (data.resetUrl) {
+        setResetUrl(data.resetUrl);
+      } else {
+        setNotFound(true);
+      }
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopy = () => {
+    if (!resetUrl) return;
+    navigator.clipboard.writeText(resetUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -107,34 +122,65 @@ export default function ForgotPassword() {
       {/* Right panel */}
       <div className="flex w-full items-center justify-center px-6 py-10 lg:w-[56%]">
         <div className="w-full max-w-md space-y-8">
-          {sent ? (
-            <div className="text-center space-y-4">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <MailCheck className="h-8 w-8 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Check your email</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  We sent a password reset link to
-                </p>
-                <p className="text-sm font-semibold text-foreground mt-1">{email}</p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Click the link in the email to set a new password. The link expires in 1 hour.
-                </p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  If you don't receive it, please contact your system administrator.
+
+          {resetUrl ? (
+            /* SUCCESS — show the reset link directly */
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                  <KeyRound className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground">Reset link ready</h2>
+                <p className="text-sm text-muted-foreground">
+                  Use the link below to set a new password. It expires in <strong>1 hour</strong>.
                 </p>
               </div>
-              <Button asChild className="w-full h-11">
+
+              <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Password Reset Link</p>
+                <p className="text-xs text-foreground break-all font-mono bg-background rounded p-2 border">
+                  {resetUrl}
+                </p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1 gap-2" onClick={handleCopy}>
+                    {copied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copied ? "Copied!" : "Copy link"}
+                  </Button>
+                  <Button size="sm" className="flex-1 gap-2" onClick={() => window.location.href = resetUrl!}>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Open link
+                  </Button>
+                </div>
+              </div>
+
+              <Button variant="outline" asChild className="w-full">
                 <Link href="/login">Back to Sign In</Link>
               </Button>
             </div>
+          ) : notFound ? (
+            /* Email not found */
+            <div className="space-y-6 text-center">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Email not found</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No account found with that email. Please check and try again.
+                </p>
+              </div>
+              <Button variant="outline" className="w-full" onClick={() => setNotFound(false)}>
+                Try again
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                Remember your password?{" "}
+                <Link href="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+              </p>
+            </div>
           ) : (
+            /* FORM */
             <>
               <div className="text-center lg:text-left">
                 <h2 className="text-3xl font-bold tracking-tight text-foreground">Forgot password?</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Enter your official email and we'll send you a reset link.
+                  Enter your official email to get a password reset link.
                 </p>
               </div>
 
@@ -158,7 +204,7 @@ export default function ForgotPassword() {
                 )}
 
                 <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
-                  {loading ? "Sending..." : "Send Reset Link"}
+                  {loading ? "Generating link..." : "Get Reset Link"}
                 </Button>
               </form>
 
