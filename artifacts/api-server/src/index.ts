@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { runBackup } from "./lib/supabase-backup";
 
 const rawPort = process.env["PORT"];
 
@@ -22,4 +23,12 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+
+  runBackup().then((result) => {
+    if (result.success) {
+      logger.info({ tables: result.tables }, "Startup Supabase backup complete");
+    } else {
+      logger.warn({ error: result.error }, "Startup Supabase backup failed");
+    }
+  });
 });

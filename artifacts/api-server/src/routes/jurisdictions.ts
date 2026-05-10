@@ -53,7 +53,7 @@ router.post("/jurisdictions", requireAuth, requireAdmin, async (req, res): Promi
 });
 
 router.put("/jurisdictions/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params["id"] as string, 10);
   if (isNaN(id) || id <= 0) {
     res.status(400).json({ error: "Invalid id" });
     return;
@@ -79,7 +79,7 @@ router.put("/jurisdictions/:id", requireAuth, requireAdmin, async (req, res): Pr
 });
 
 router.delete("/jurisdictions/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params["id"] as string, 10);
   if (isNaN(id) || id <= 0) {
     res.status(400).json({ error: "Invalid id" });
     return;

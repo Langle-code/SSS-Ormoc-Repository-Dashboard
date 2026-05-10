@@ -30,7 +30,7 @@ router.post("/document-types", requireAuth, requireAdmin, async (req, res): Prom
 });
 
 router.delete("/document-types/:name", requireAuth, requireAdmin, async (req, res): Promise<void> => {
-  const { name } = req.params;
+  const name = req.params["name"] as string;
   await db.delete(documentTypesTable).where(eq(documentTypesTable.name, name));
   res.json({ message: "Deleted" });
 });
