@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Layout } from "@/components/layout";
 import {
   useDocumentTypes,
   useCreateDocumentType,
@@ -81,14 +82,17 @@ export default function DocumentTypes() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="animate-spin h-8 w-8 text-primary" />
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <Layout>
+      <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900">Document Types</h2>
         <p className="text-gray-500 text-sm">
@@ -191,6 +195,7 @@ export default function DocumentTypes() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </Layout>
   );
 }
