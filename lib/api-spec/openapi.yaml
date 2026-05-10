@@ -788,7 +788,6 @@ components:
           type: string
         formType:
           type: string
-          enum: [R1/R1A]
         employerId:
           type: integer
         fileName:

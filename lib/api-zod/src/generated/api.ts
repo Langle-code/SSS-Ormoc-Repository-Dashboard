@@ -215,7 +215,7 @@ export const ListDocumentsResponse = zod.array(ListDocumentsResponseItem);
  */
 export const UploadDocumentBody = zod.object({
   formName: zod.string(),
-  formType: zod.enum(["R1/R1A"]),
+  formType: zod.string(),
   employerId: zod.number(),
   fileName: zod.string(),
   fileUrl: zod.string(),

@@ -20,7 +20,6 @@ export type {
   SuccessResponse,
   UpdateDocumentStatusBodyStatus,
   UpdateUserBodyRole,
-  UploadDocumentBodyFormType,
   UploadUrlResponse,
   User,
   UserRole,

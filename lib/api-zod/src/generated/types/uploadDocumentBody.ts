@@ -5,11 +5,10 @@
  * SSS Ormoc Digital R-1/R-1A Repository API
  * OpenAPI spec version: 0.1.0
  */
-import type { UploadDocumentBodyFormType } from "./uploadDocumentBodyFormType";
 
 export interface UploadDocumentBody {
   formName: string;
-  formType: UploadDocumentBodyFormType;
+  formType: string;
   employerId: number;
   fileName: string;
   fileUrl: string;

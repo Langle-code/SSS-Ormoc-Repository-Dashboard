@@ -37,7 +37,6 @@ export * from "./updateJurisdictionBody";
 export * from "./updateUserBody";
 export * from "./updateUserBodyRole";
 export * from "./uploadDocumentBody";
-export * from "./uploadDocumentBodyFormType";
 export * from "./uploadUrlResponse";
 export * from "./user";
 export * from "./userRole";

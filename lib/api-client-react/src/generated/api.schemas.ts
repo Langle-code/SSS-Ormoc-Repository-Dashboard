@@ -139,16 +139,9 @@ export interface Document {
   createdAt: string;
 }
 
-export type UploadDocumentBodyFormType =
-  (typeof UploadDocumentBodyFormType)[keyof typeof UploadDocumentBodyFormType];
-
-export const UploadDocumentBodyFormType = {
-  "R1/R1A": "R1/R1A",
-} as const;
-
 export interface UploadDocumentBody {
   formName: string;
-  formType: UploadDocumentBodyFormType;
+  formType: string;
   employerId: number;
   fileName: string;
   fileUrl: string;

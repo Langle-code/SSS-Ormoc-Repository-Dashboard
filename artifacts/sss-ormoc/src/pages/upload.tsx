@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Layout } from "@/components/layout";
 import {
   useListEmployers,
@@ -7,9 +7,10 @@ import {
   getListDocumentsQueryKey,
   getGetDashboardStatsQueryKey,
 } from "@workspace/api-client-react";
+import { useDocumentTypes } from "@/hooks/use-document-types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,21 +21,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Upload as UploadIcon } from "lucide-react";
+
+const DEFAULT_TYPE = "R1/R1A";
 
 export default function UploadForm() {
   const [employerId, setEmployerId] = useState("");
   const [formName, setFormName] = useState("");
-  const [formType] = useState("R1/R1A");
+  const [formType, setFormType] = useState(DEFAULT_TYPE);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { data: employers } = useListEmployers();
+  const { data: documentTypes } = useDocumentTypes();
   const getUploadUrl = useGetUploadUrl();
   const uploadDocument = useUploadDocument();
+
+  // Build the list of selectable form types: built-in R1/R1A + any admin-added types.
+  const formTypeOptions = (() => {
+    const names = new Set<string>([DEFAULT_TYPE]);
+    for (const t of documentTypes ?? []) names.add(t.name);
+    return Array.from(names);
+  })();
+
+  // If the currently selected type ever disappears (e.g. admin removed it),
+  // fall back to the default so the form stays valid.
+  useEffect(() => {
+    if (!formTypeOptions.includes(formType)) {
+      setFormType(DEFAULT_TYPE);
+    }
+  }, [formTypeOptions, formType]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -77,7 +95,7 @@ export default function UploadForm() {
       await uploadDocument.mutateAsync({
         data: {
           formName: formName || file.name,
-          formType: formType as "R1/R1A",
+          formType,
           employerId: parseInt(employerId, 10),
           fileName: file.name,
           fileUrl: urlResponse.fileUrl,
@@ -125,13 +143,22 @@ export default function UploadForm() {
               </div>
 
               <div className="space-y-2">
-                <Label>R1/R1A Form</Label>
-                <RadioGroup defaultValue="R1/R1A" className="flex gap-4">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="R1/R1A" id="r1r1a" />
-                    <Label htmlFor="r1r1a">R1/R1A</Label>
-                  </div>
-                </RadioGroup>
+                <Label>Document Type</Label>
+                <Select value={formType} onValueChange={setFormType}>
+                  <SelectTrigger data-testid="select-form-type">
+                    <SelectValue placeholder="Choose a document type..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {formTypeOptions.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Admins can add more types from the Document Types page.
+                </p>
               </div>
 
               <div className="space-y-2">
