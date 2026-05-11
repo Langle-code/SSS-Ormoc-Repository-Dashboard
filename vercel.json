@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @workspace/sss-ormoc run build",
+  "outputDirectory": "artifacts/sss-ormoc/dist/public",
+  "framework": null,
+  "functions": {
+    "api/[...path].ts": {
+      "runtime": "@vercel/node@5.3.27",
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
