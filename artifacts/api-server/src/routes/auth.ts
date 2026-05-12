@@ -87,9 +87,12 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     .set({ loginCount: sql`${usersTable.loginCount} + 1` })
     .where(eq(usersTable.id, user.id));
 
+  const ua = req.headers["user-agent"];
+  const browser = parseBrowser(ua);
+  req.log.info({ ua, browser }, "Login: parsed browser from user-agent");
   await db.insert(loginHistoryTable).values({
     userId: user.id,
-    browser: parseBrowser(req.headers["user-agent"]),
+    browser,
   });
 
   res.cookie("userId", String(user.id), {
