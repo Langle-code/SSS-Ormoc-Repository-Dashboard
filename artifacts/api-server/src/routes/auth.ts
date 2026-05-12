@@ -5,6 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
 import { requireAuth, requireAdmin } from "../lib/auth";
+import { parseBrowser } from "../lib/user-agent";
 void requireAuth;
 void requireAdmin;
 
@@ -86,7 +87,10 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     .set({ loginCount: sql`${usersTable.loginCount} + 1` })
     .where(eq(usersTable.id, user.id));
 
-  await db.insert(loginHistoryTable).values({ userId: user.id });
+  await db.insert(loginHistoryTable).values({
+    userId: user.id,
+    browser: parseBrowser(req.headers["user-agent"]),
+  });
 
   res.cookie("userId", String(user.id), {
     signed: true,
