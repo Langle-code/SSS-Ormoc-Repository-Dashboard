@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "HsJ9vaKvJiU7XS5Y70YgI"
+uri = "file://exports/employers-with-no-documents.csv"
+type = "table"
+title = "Employers with No Documents CSV"
+
+[[outputs]]
+id = "fXExP0PiwBK730jv5nbDW"
+uri = "file://exports/employers-with-duplicate-documents.csv"
+type = "table"
+title = "Employers with Duplicate Documents CSV"
