@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+const API_BASE = "";
 
 function GeometricBackground() {
   return (
@@ -76,7 +76,7 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}/api/auth/reset-password`, {
+      const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),

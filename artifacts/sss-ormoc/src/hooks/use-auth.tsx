@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useGetMe, useLogin, useLogout, useRegister } from "@workspace/api-client-react";
+import { useLogin, useLogout, useRegister, useGetMe } from "@workspace/api-client-react";
 import type { AuthUser, LoginBody, RegisterBody } from "@workspace/api-client-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
+const authQueryKey = ["/api/auth/me"];
 
 type AuthContextType = {
   user: AuthUser | null;
@@ -21,8 +22,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: meData, isLoading: isMeLoading, error: meError } = useGetMe({ query: { retry: false, queryKey: ["/api/auth/me"] } });
-  
+  const { data: meData, isLoading: isMeLoading, error: meError } = useGetMe({
+    query: { retry: false, queryKey: authQueryKey },
+  });
+
   const loginMutation = useLogin();
   const registerMutation = useRegister();
   const logoutMutation = useLogout();
@@ -39,17 +42,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await loginMutation.mutateAsync({ data });
       setUser(response.user);
-      
+
       if (response.showSurvey && response.surveyUrl) {
-        window.dispatchEvent(new CustomEvent('show-survey', { detail: response.surveyUrl }));
+        window.dispatchEvent(new CustomEvent("show-survey", { detail: response.surveyUrl }));
       }
-      
+
+      await queryClient.invalidateQueries({ queryKey: authQueryKey });
       setLocation("/dashboard");
       toast({ title: "Login successful" });
     } catch (error: any) {
       toast({
         title: "Login failed",
-        description: error?.data?.error || "Invalid credentials",
+        description: error?.data?.error || error?.message || "Invalid credentials",
         variant: "destructive",
       });
       throw error;
@@ -60,12 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await registerMutation.mutateAsync({ data });
       setUser(result);
+      await queryClient.invalidateQueries({ queryKey: authQueryKey });
       setLocation("/dashboard");
       toast({ title: "Registration successful" });
     } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: error?.data?.error || "An error occurred",
+        description: error?.data?.error || error?.message || "An error occurred",
         variant: "destructive",
       });
       throw error;
@@ -84,11 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
-
   return (
     <AuthContext.Provider value={{ user, isLoading: isMeLoading, login, register, logout }}>
-      
       {children}
     </AuthContext.Provider>
   );

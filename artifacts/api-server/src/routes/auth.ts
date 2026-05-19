@@ -47,7 +47,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       signed: true,
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }
@@ -99,7 +99,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     signed: true,
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 

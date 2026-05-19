@@ -39,7 +39,7 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash2, X, UserPlus, Loader2 } from "lucide-react";
 import type { User } from "@workspace/api-client-react";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+const API_BASE = "";
 
 export default function Users() {
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -139,7 +139,7 @@ export default function Users() {
 
     setAddLoading(true);
     try {
-      const res = await fetch(`${BASE}/api/auth/register`, {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
