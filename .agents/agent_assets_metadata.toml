@@ -12,3 +12,9 @@ id = "fXExP0PiwBK730jv5nbDW"
 uri = "file://exports/employers-with-duplicate-documents.csv"
 type = "table"
 title = "Employers with Duplicate Documents CSV"
+
+[[outputs]]
+id = "ZycjQTrQx2yK96vpNwxQt"
+uri = "file://exports/employers-review-list.csv"
+type = "table"
+title = "Combined Employer Review CSV"
