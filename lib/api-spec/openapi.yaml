@@ -38,7 +38,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
 
-  /auth/register:
+  /user/register:
     post:
       operationId: register
       tags: [auth]
@@ -63,7 +63,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /auth/login:
+  /user/login:
     post:
       operationId: login
       tags: [auth]
@@ -88,7 +88,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /auth/logout:
+  /user/logout:
     post:
       operationId: logout
       tags: [auth]
@@ -101,7 +101,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /auth/me:
+  /user/me:
     get:
       operationId: getMe
       tags: [auth]

@@ -133,7 +133,7 @@ export function useHealthCheck<
  * @summary Register a new account
  */
 export const getRegisterUrl = () => {
-  return `/api/auth/register`;
+  return `/api/user/register`;
 };
 
 export const register = async (
@@ -219,7 +219,7 @@ export const useRegister = <
  * @summary Sign in
  */
 export const getLoginUrl = () => {
-  return `/api/auth/login`;
+  return `/api/user/login`;
 };
 
 export const login = async (
@@ -305,7 +305,7 @@ export const useLogin = <
  * @summary Sign out
  */
 export const getLogoutUrl = () => {
-  return `/api/auth/logout`;
+  return `/api/user/logout`;
 };
 
 export const logout = async (
@@ -386,7 +386,7 @@ export const useLogout = <
  * @summary Get current user
  */
 export const getGetMeUrl = () => {
-  return `/api/auth/me`;
+  return `/api/user/me`;
 };
 
 export const getMe = async (options?: RequestInit): Promise<AuthUser> => {
@@ -397,7 +397,7 @@ export const getMe = async (options?: RequestInit): Promise<AuthUser> => {
 };
 
 export const getGetMeQueryKey = () => {
-  return [`/api/auth/me`] as const;
+  return [`/api/user/me`] as const;
 };
 
 export const getGetMeQueryOptions = <

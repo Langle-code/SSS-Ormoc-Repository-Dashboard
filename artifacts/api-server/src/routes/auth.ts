@@ -13,7 +13,7 @@ const SURVEY_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQS
 
 const router: IRouter = Router();
 
-router.post("/auth/register", async (req, res): Promise<void> => {
+router.post("/user/register", async (req, res): Promise<void> => {
   const parsed = RegisterBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -62,7 +62,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   });
 });
 
-router.post("/auth/login", async (req, res): Promise<void> => {
+router.post("/user/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -120,7 +120,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   });
 });
 
-router.post("/auth/forgot-password", async (req, res): Promise<void> => {
+router.post("/user/forgot-password", async (req, res): Promise<void> => {
   const { email } = req.body;
   if (!email || typeof email !== "string") {
     res.status(400).json({ error: "Email is required" });
@@ -152,7 +152,7 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
   });
 });
 
-router.post("/auth/reset-password", async (req, res): Promise<void> => {
+router.post("/user/reset-password", async (req, res): Promise<void> => {
   const { token, password } = req.body;
   if (!token || typeof token !== "string") {
     res.status(400).json({ error: "Reset token is required" });
@@ -177,12 +177,12 @@ router.post("/auth/reset-password", async (req, res): Promise<void> => {
   res.json({ message: "Password updated successfully. You can now sign in." });
 });
 
-router.post("/auth/logout", async (_req, res): Promise<void> => {
+router.post("/user/logout", async (_req, res): Promise<void> => {
   res.clearCookie("userId");
   res.json({ message: "Signed out" });
 });
 
-router.get("/auth/me", async (req, res): Promise<void> => {
+router.get("/user/me", async (req, res): Promise<void> => {
   if (!req.session?.userId) {
     res.status(401).json({ error: "Not authenticated" });
     return;
