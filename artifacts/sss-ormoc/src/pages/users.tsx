@@ -139,7 +139,7 @@ export default function Users() {
 
     setAddLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/user/register`, {
+      const res = await fetch(`${API_BASE}/api/v1/register`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

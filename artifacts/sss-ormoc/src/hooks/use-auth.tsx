@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
-const authQueryKey = ["/api/user/me"];
+const authQueryKey = ["/api/v1/me"];
 
 type AuthContextType = {
   user: AuthUser | null;
