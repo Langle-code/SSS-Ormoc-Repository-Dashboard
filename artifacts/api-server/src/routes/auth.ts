@@ -22,8 +22,6 @@ router.post("/v1/register", async (req, res): Promise<void> => {
 
   const { email, password, name, role, jurisdictions } = parsed.data;
 
-  // If an authenticated admin is making the request, they're creating an account
-  // for someone else — don't change their session. Otherwise this is public self-signup.
   const isAdminCreating = !!req.session?.userId;
 
   const existing = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase().trim()));
@@ -41,10 +39,8 @@ router.post("/v1/register", async (req, res): Promise<void> => {
     jurisdictions,
   }).returning();
 
-  // For self-signup, set a session cookie so they're logged in immediately
   if (!isAdminCreating) {
     res.cookie("userId", String(user.id), {
-      signed: true,
       httpOnly: true,
       sameSite: "lax",
       secure: true,
@@ -96,7 +92,6 @@ router.post("/v1/login", async (req, res): Promise<void> => {
   });
 
   res.cookie("userId", String(user.id), {
-    signed: true,
     httpOnly: true,
     sameSite: "lax",
     secure: true,
@@ -113,7 +108,7 @@ router.post("/v1/login", async (req, res): Promise<void> => {
       name: user.name,
       role: user.role,
       jurisdictions: user.jurisdictions,
-      loginCount: newLoginCount,
+      loginCount: user.loginCount,
     },
     showSurvey,
     surveyUrl: showSurvey ? SURVEY_URL : undefined,
@@ -133,13 +128,12 @@ router.post("/v1/forgot-password", async (req, res): Promise<void> => {
 
   if (user) {
     const token = randomBytes(32).toString("hex");
-    const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const expiry = new Date(Date.now() + 60 * 60 * 1000);
 
     await db.update(usersTable)
       .set({ resetToken: token, resetTokenExpiry: expiry })
       .where(eq(usersTable.id, user.id));
 
-    // Return the reset URL directly (internal system — no email server available)
     const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
     resetUrl = `${origin}/reset-password?token=${token}`;
   }
