@@ -15,7 +15,7 @@ declare global {
 }
 
 export async function sessionMiddleware(req: Request, _res: Response, next: NextFunction): Promise<void> {
-  const userId = req.signedCookies?.["userId"];
+  const userId = req.cookies?.["userId"];
   if (userId) {
     const id = parseInt(userId, 10);
     if (!isNaN(id)) {
