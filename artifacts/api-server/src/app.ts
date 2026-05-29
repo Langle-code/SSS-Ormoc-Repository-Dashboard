@@ -33,6 +33,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.SESSION_SECRET || "dev-secret"));
 app.use(sessionMiddleware);
 
-app.use("/", router);
+app.use("/api", router);
 
 export default app;
