@@ -1,6 +1,6 @@
-// Pre-built self-contained bundle (esbuild output) — all workspace deps inlined.
-// Built by: pnpm --filter @workspace/api-server run build  →  api/_server/app.mjs
 // @ts-ignore
-import app from "./_server/app.mjs";
+import app from "../artifacts/api-server/dist/app.mjs";
 
-export default app;
+export default function handler(req: any, res: any) {
+  return app(req, res);
+}
