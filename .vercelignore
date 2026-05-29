@@ -4,10 +4,7 @@
 .replit-artifact
 attached_assets
 **/.replit-artifact
-**/dist
 **/node_modules
 artifacts/mockup-sandbox
-artifacts/api-server/dist
-artifacts/api-server/build.mjs
 *.log
 .DS_Store
